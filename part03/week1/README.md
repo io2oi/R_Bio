@@ -18,7 +18,52 @@ By following the instructions in this document, you will learn to:
 1. 갱신 Update your Elasticluster installation
 
 ## Install Elasticluster on your workstation/laptop
-
+virtualenv 를 이용해서 작업을 하기 때문에 먼저 virtualenv 가 설치되어있어야 한다.
+없을 경우 아래와 같이 실행한다.
+```shell
+]$ sudo pip install virtualenv
+```
+만약 사용자만을 위해 설치하고자 한다면
+```shell
+]$ sudo pip install --user virtualenv
+```
+1. elasticluster를 설치할 디렉토리로 옮긴다.
+1. ```virtualenv```명령어를 이용하여 디렉토리 생성한다.
+```shell
+]$ virtualenv elasticluster
+```
+1. 활성화 한다
+```shell
+]$ source elasticluster/bin/activate
+```
+나중에 ```deactivate``` 명령어로 ```virtualenv```를 해지할 수 있음
+![file](activate-virtualenv.png)
+1. elasticluster 설치
+두가지 방법이 있다. github (mainline) 을 이용하거나 github (google genomics fork) 를 이용하는 방법이다. 문서에서는 첫번째를 추천하고 있다.
+ 1. From github (mainline)
+ ```
+cd elasticluster
+git clone git://github.com/gc3-uzh-ch/elasticluster.git src
+cd src
+python setup.py install
+```
+  1.From github (googlegenomics fork)
+  ```
+cd elasticluster
+git clone https://github.com/googlegenomics/elasticluster.git src
+cd src
+python setup.py install
+```
+나의 경우 1번을 실행하고 있는데 error 발생
+  - libffi 에러와 ssl.h 가 없는 문제는 아래와 같이 해서 해결
+  ```]$ sudo apt-get install libffi-dev libssl-dev```
+  - dist must be a distribution instance 에러 
+  ```elasticluster/lib/python2.7/distutils/``` 아래에 ```cmp.py``` 가 없어서 생기는 문제 
+  ```shell
+  ]$ cp $HOME/anaconda2/lib/python2.7/distutils/cmd.py ../lib/python2.7/distutils/
+  ```
+  해서 해결. (정확한 이유를 아는 분 설명 부탁)
+  
 ##  Create your cluster definition file
 
 ## Elasticluster operations
