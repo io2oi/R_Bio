@@ -65,6 +65,57 @@ python setup.py install
   해서 해결. (정확한 이유를 아는 분 설명 부탁)
   
 ##  Create your cluster definition file
+GCP project 에 접근하기 위해서는 반드시 ```.elasticluster/config``` 파일을 생성해야 한다.
+
+config 파일에는 다음과 같은 내용이 들어간다. \*\*\*\* 부분에 본인의 것을 채워 넣어야 한다 
+```
+# Gridengine software to be configured by Ansible
+[setup/ansible-gridengine]
+provider=ansible
+frontend_groups=gridengine_master
+compute_groups=gridengine_clients
+
+# Create a cloud provider (call it "google-cloud")
+[cloud/google-cloud]
+provider=google
+gce_project_id=****REPLACE WITH YOUR PROJECT ID****
+gce_client_id=****REPLACE WITH YOUR CLIENT ID****
+gce_client_secret=****REPLACE WITH YOUR SECRET KEY****
+
+# Create a login (call it "google-login")
+[login/google-login]
+image_user=****REPLACE WITH YOUR GOOGLE USERID (just the userid, not email)****
+image_user_sudo=root
+image_sudo=True
+user_key_name=elasticluster
+user_key_private=~/.ssh/google_compute_engine
+user_key_public=~/.ssh/google_compute_engine.pub
+
+# Bring all of the elements together to define a cluster called "gridengine"
+[cluster/gridengine]
+cloud=google-cloud
+login=google-login
+setup_provider=ansible-gridengine
+security_group=default
+image_id=****REPLACE WITH OUTPUT FROM: gcloud compute images list | grep ^backports-debian | cut -f 1 -d " "****
+flavor=n1-standard-1
+frontend_nodes=1
+compute_nodes=3
+image_userdata=
+ssh_to=frontend
+```
+다 채워넣고 난 다음
+```shell
+]$ elasticluster -c <config file> start gridengine
+```
+하면 gridengine cluster가 생성되고 로그인 할 준비가 된다.
+![start001](elasticluster-start.png)
+![start002](elasticluster-start-02.png)
+cluster 를 지우고 싶을 때는
+```shell
+]$ elasticluster stop gridengine
+```
+![end](elasticluster-stop.png)
 
 ## Elasticluster operations
 
