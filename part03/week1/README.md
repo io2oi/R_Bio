@@ -162,3 +162,10 @@ or without prompt:
 ## Exit the virtualenv
 ``deactivate``` 를 하면 virtualenv가 해제 된다.
 ## Updating your installation
+새로운 버전으로 업데이트 하려면 앞에서 한 elasticluster를 ```git pull``` 하고 다시 설치하면 된다.
+```
+source elasticluster/bin/activate
+cd elasticluster/src
+git pull
+python setup.py install
+```
