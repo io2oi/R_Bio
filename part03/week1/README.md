@@ -38,15 +38,18 @@ virtualenv 를 이용해서 작업을 하기 때문에 먼저 virtualenv 가 설
 ```
 나중에 ```deactivate``` 명령어로 ```virtualenv```를 해지할 수 있음
 ![file](activate-virtualenv.png)
+
 1. elasticluster 설치
 두가지 방법이 있다. github (mainline) 을 이용하거나 github (google genomics fork) 를 이용하는 방법이다. 문서에서는 첫번째를 추천하고 있다.
- 1. From github (mainline)
+
+  1. From github (mainline)
  ```
 cd elasticluster
 git clone git://github.com/gc3-uzh-ch/elasticluster.git src
 cd src
 python setup.py install
 ```
+
   1.From github (googlegenomics fork)
   ```
 cd elasticluster
@@ -68,6 +71,7 @@ python setup.py install
 GCP project 에 접근하기 위해서는 반드시 ```.elasticluster/config``` 파일을 생성해야 한다.
 
 config 파일에는 다음과 같은 내용이 들어간다. \*\*\*\* 부분에 본인의 것을 채워 넣어야 한다 
+\(자세한 정의는 [연결](https://elasticluster.readthedocs.io/en/latest/configure.html)\)
 ```
 # Gridengine software to be configured by Ansible
 [setup/ansible-gridengine]
@@ -109,6 +113,10 @@ ssh_to=frontend
 ]$ elasticluster -c <config file> start gridengine
 ```
 하면 gridengine cluster가 생성되고 로그인 할 준비가 된다.
+참고사항들
+ - *나의 경우 image_id 에서 grep debian 만 하였음*
+ - *user_key_private, user_key_public은 없으면 생성해야함. 원래 문서를 참조 할 것 * 
+ 
 ![start001](elasticluster-start.png)
 ![start002](elasticluster-start-02.png)
 cluster 를 지우고 싶을 때는
@@ -118,7 +126,39 @@ cluster 를 지우고 싶을 때는
 ![end](elasticluster-stop.png)
 
 ## Elasticluster operations
+드디어 설정이 끝났다! 이제 사용해 보자
+### Deploy your cluster
+```elasticluster start gridengine```
+상세한 내용을 보고 싶으면 -v 를 붙여라
+```elasticluster start -v gridengine```
+### List your cluster instances
+```elasticluster list-nodes gridengine```
+![list-nodes](elasticluster-list-nodes.png)
+### Copy files to your instances
+frontend instance 에 파일을 복사할 수 있는 sftp를 제공하고 있다. 
+
+```elasticluster sftp gridengine```
+![sftp](elasticluster-sftp.png)
+sftp 에 파일을 올릴때 bash script 도 지원한다. [HERE DOCUMENTS](http://tldp.org/LDP/abs/html/here-docs.html):
+```
+elasticluster sftp gridengine << 'EOF'
+put *.sh
+EOF
+```
+
+### SSH to your instances
+ssh로 접속도 가능하다
+frontend 접속
+``` elasticluster ssh gridengine```
+compute node 접속
+```  elasticluster ssh gridengine -n <nodename>```
+nodename은 compute001 등을 쓰면 된다.
+![ssh](elasticluster-ssh.png)
+### Destroy your cluster
+```elasticluster stop gridengine```
+or without prompt:
+```elasticluster stop --yes gridengine```
 
 ## Exit the virtualenv
-
+``deactivate``` 를 하면 virtualenv가 해제 된다.
 ## Updating your installation
