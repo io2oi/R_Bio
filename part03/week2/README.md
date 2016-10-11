@@ -2,9 +2,7 @@
 
 # Create a Grid Engine cluster with Preemptible VM workers
 Preemptible VM worker는 일반 instance와 달리 가격이 매우 싸다는 장점이 있다. 대신해서 최대 24시간까지만 사용 가능하다.  
-| Note |
-|--------|
-| Preemtible VM은 최대 20개 정도까지만 생성 하는 것을 추천한다. 그 이상을 사용하고 싶으면 정규 VM을 사용하라.|
+> Preemtible VM은 최대 20개 정도까지만 생성 하는 것을 추천한다. 그 이상을 사용하고 싶으면 정규 VM을 사용하라.
 
 ## Toolset
 Premptible VM을 사용하기 위해서는 다음의 세가지 도구가 필요하다
