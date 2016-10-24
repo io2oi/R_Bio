@@ -63,15 +63,15 @@ The syntax for running the sample is:
 operation 종류는 아래와 같이 정하면 된다.
     * SAMTOOLS_OPERATION: `index`
 공간의 위치는 다음과 같이 정의 한다.
-    * INPUT_LIST_FILE: file containing a list of GCS paths to the input files to process
-    * OUTPUT_PATH: GCS path indicating where to upload the output files. If set to source, the output will be written to the same path as the source file (with the extension .bai appended)
+    * INPUT_LIST_FILE: `Google Cloud Storage` 에 있는 파일 이름
+    * OUTPUT_PATH: `Google Cloud Storage` path <- 결과 파일을 올리는 경로.
     * OUTPUT_LOG_PATH: (optional) GCS path indicating where to upload log files
 1. Run the sample:
 아래와 같이 실행한다.
 ```
 ./src/samtools/launch_samtools.sh ./samples/samtools/samtools_index_config.sh
 ```
-성공적으로 launch되면 아래와 같은 메시지가 출력 된다. 
+성공적으로 launch되면 아래와 같은 메시지가 출력 된다.
 ```
 Your job-array 1.1-6:1 ("samtools") has been submitted
 This message tells you that the submitted job is a gridengine array job. The above message indicates that the job id is 1 and that the tasks are numbered 1 through 6. The name of the job samtools is also indicated.
@@ -97,24 +97,28 @@ elasticluster stop gridengine
 
 ** Create a gridengine cluster with sufficient disk space attached to each compute node **
 
-Determine disk size requirements
+- Determine disk size requirements
 
-Each compute node will require sufficient disk space to hold the input and output files for its current task. Determine the largest file in your input list and estimate the total space you will need. It may be necessary to download the file and perform the operation manually to get a maximum combined input and output size.
+elasticluster를 이용해서 노드를 만들면 기본이 10GB 의 저장용량을 갖는다 [참조](http://googlegenomics.readthedocs.io/en/latest/use_cases/setup_gridengine_cluster_on_compute_engine/index.html#elasticluster-config-boot-disk).
+경우에 따라 계산 노드의 저장 용량 등을 조절할 필요가 있는데 google cloud 에서는 여러가지 종류의 storage를 제공하고 있으니 이에 따라 선택하여야 한다 [참고: selecting the right persistent disk](https://cloud.google.com/compute/docs/tutorials/compute-engine-disks-price-performance-and-persistence#selecting_the_right_disk).
 
-Persistent disk performance also scales with the size of the volume. Independent of storage requirements, for consistent throughput on long running jobs, use a standard persistent disk of at least 1TB, or use SSD persistent disk. More documentation is available for selecting the right persistent disk.
+- Verify or increase quota
 
-
-Verify or increase quota
-
-Your choice for number of nodes and disk size must take into account your Compute Engine resource quota for the region of your cluster.
-
-Quota limits and current usage can be viewed with gcloud compute:
-
+Quota 제한과 현재 사용량은 다음의 `gcloud compute` 명령어를 통해 볼 수 있다:
+```
 gcloud compute regions describe *region*
-or in Cloud Platform Console:
+```
+> region은 [https://cloud.google.com/compute/docs/regions-zones/regions-zones](https://cloud.google.com/compute/docs/regions-zones/regions-zones)에 가면 볼 수 있다.
+![그림](zones_diagram.svg)
 
-https://console.cloud.google.com/project/_/compute/quotas
-Important quota limits include CPUs, in-use IP addresses, and disk size.
+또는 `Cloud Platform Console`에서 확인 할 수 있다.
 
-To request additional quota, submit the Compute Engine quota request form.
+[https://console.cloud.google.com/project/_/compute/quotas](https://console.cloud.google.com/project/_/compute/quotas)
 
+중요하게 볼 것은 CPUs, in-use IP addresses, disk size 들이다.
+
+쿼터를 추가하고 싶으면 [Compute Engine quota request form](https://docs.google.com/a/google.com/forms/d/1vb2MkAr9JcHrp6myQ3oTxCyBv2c7Iyc5wqIKqE3K4IE/viewform) 을 작성하면 된다.
+
+- Configure your cluster
+
+elasticluster의 configure 파일에 [참조](http://googlegenomics.readthedocs.io/en/latest/use_cases/setup_gridengine_cluster_on_compute_engine/index.html#elasticluster-config-boot-disk) 처럼 세팅하고 부팅하면 된다.
